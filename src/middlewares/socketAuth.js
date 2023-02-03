@@ -8,10 +8,10 @@ const { decodeAuthToken } = require('../utils');
 module.exports = async (socket, next) => {
     try {
         const token = socket.handshake.headers['authorization']?.replace('Bearer ', '');
-        if (!token) return next();
+        if (!token) return next(new Error('Unauthorized'));
         const user = await decodeAuthToken(token);
-        if (!user) return next();
-        socket.id = user.id;
+        if (!user) return next(new Error('Unauthorized'));
+        socket.user = user;
         next();
     }
     catch (e) { console.log(e) };
